@@ -675,7 +675,9 @@ export function attachGatewayWsMessageHandler(params: {
           return;
         }
 
-        const skipPairing = allowControlUiBypass && sharedAuthOk;
+        // Skip device pairing when authenticated with the shared gateway token —
+        // possessing the token is sufficient proof of ownership for Aware-managed tenants.
+        const skipPairing = sharedAuthOk || (allowControlUiBypass && sharedAuthOk);
         if (device && devicePublicKey && !skipPairing) {
           const requirePairing = async (reason: string, _paired?: { deviceId: string }) => {
             const pairing = await requestDevicePairing({
